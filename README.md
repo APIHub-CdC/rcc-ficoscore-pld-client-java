@@ -121,24 +121,20 @@ private Logger logger = LoggerFactory.getLogger(ApiTest.class.getName());
 
 private ApiClient apiClient;
 
-public void noSSL(){
+	@Before()
+	public void setUp() {
+	this.apiClient = api.getApiClient();
 	this.apiClient.setBasePath("the_url");
 	OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
-		    .readTimeout(30, TimeUnit.SECONDS)
-		    .addInterceptor(new SignerInterceptor())
-		    .build();
+		.readTimeout(30, TimeUnit.SECONDS)
+		.addInterceptor(new SignerInterceptor())
+		.build();
 	apiClient.setHttpClient(okHttpClient);
-}
-
-@Before()
-public void setUp() {
-	this.apiClient = api.getApiClient();
-	noSSL();
-}
+	}
 
 @Test
 public void getReporteTest() throws ApiException {
-	
+
 	String xApiKey = "your_api_key";
 	String username = "your_username";
 	String password = "your_password";
@@ -146,25 +142,25 @@ public void getReporteTest() throws ApiException {
 
 	PersonaPeticion persona = new PersonaPeticion();
 	DomicilioPeticion domicilio = new DomicilioPeticion();
-	
+
 	persona.setApellidoPaterno("PATERNO");
 	persona.setApellidoMaterno("MATERNO");
 	persona.setApellidoAdicional(null);
 	persona.setPrimerNombre("PRIMERNOMBRE");
-    persona.setSegundoNombre(null);
-    persona.setFechaNacimiento("1952-05-13");
-    persona.setRFC("PAMP010101");
-    persona.setCURP(null);
-    persona.setNacionalidad("MX");
-    persona.setResidencia(null);
-    persona.setEstadoCivil(null);
-    persona.setSexo(null);
-    persona.setClaveElectorIFE(null);
-    persona.setNumeroDependientes(null);
-    persona.setFechaDefuncion(null);
-    persona.setDomicilio(null);
-	
-    
+	persona.setSegundoNombre(null);
+	persona.setFechaNacimiento("1952-05-13");
+	persona.setRFC("PAMP010101");
+	persona.setCURP(null);
+	persona.setNacionalidad("MX");
+	persona.setResidencia(null);
+	persona.setEstadoCivil(null);
+	persona.setSexo(null);
+	persona.setClaveElectorIFE(null);
+	persona.setNumeroDependientes(null);
+	persona.setFechaDefuncion(null);
+	persona.setDomicilio(null);
+
+
 	domicilio.setDireccion("HIDALGO 32");
 	domicilio.setColoniaPoblacion("CENTRO");
 	domicilio.setDelegacionMunicipio("LA BARCA");
@@ -175,13 +171,13 @@ public void getReporteTest() throws ApiException {
 	domicilio.setNumeroTelefono(null);
 	domicilio.setTipoDomicilio(null);
 	domicilio.setTipoAsentamiento(null);
-	
+
 	persona.setDomicilio(domicilio);
-	
+
 	Respuesta response = api.getReporte(xApiKey, username, password, persona, xFullReport);
 
 	Assert.assertTrue(response.getFolioConsulta() != null);
-	
+
 	logger.info(response.toString());
 
 	if (response.getFolioConsulta() != null && !xFullReport ) {
@@ -201,12 +197,12 @@ public void getReporteTest() throws ApiException {
 
 		Scores scores = api.getScores(folioConsulta, xApiKey, username, password);
 		Assert.assertTrue(scores.getScores() != null);
-		
+
 		Mensajes mensajes = api.getMensajes(folioConsulta, xApiKey, username, password);
 		Assert.assertTrue(mensajes.getMensajes() != null);
 	}
 
-}	
+}
 ```
 ### Paso 6. Ejecutar la prueba unitaria
 

@@ -28,21 +28,16 @@ public class ApiTest {
 	private Logger logger = LoggerFactory.getLogger(ApiTest.class.getName());
 
 	private ApiClient apiClient;
-	
-	public void noSSL(){
-		this.apiClient.setBasePath("the_url");
-    	OkHttpClient insecureClient = ApiClient.getClientNoSSLVerification();
-    	OkHttpClient okHttpClient = insecureClient.newBuilder()
-    			.readTimeout(60, TimeUnit.SECONDS)
-    			.addInterceptor(new SignerInterceptor())
-    			.build();
-    	apiClient.setHttpClient(okHttpClient);
-	}
 
 	@Before()
 	public void setUp() {
 		this.apiClient = api.getApiClient();
-		noSSL();
+		this.apiClient.setBasePath("the_url");
+		OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+			    .readTimeout(30, TimeUnit.SECONDS)
+			    .addInterceptor(new SignerInterceptor())
+			    .build();
+		apiClient.setHttpClient(okHttpClient);
 	}
 
 	@Test
