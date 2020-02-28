@@ -8,7 +8,7 @@ import io.RCCFicoScorePLD.client.model.Credito;
 import io.RCCFicoScorePLD.client.model.DomicilioRespuesta;
 import io.RCCFicoScorePLD.client.model.Empleo;
 import io.RCCFicoScorePLD.client.model.Mensaje;
-import io.RCCFicoScorePLD.client.model.PersonasRespuesta;
+import io.RCCFicoScorePLD.client.model.PersonaRespuesta;
 import io.RCCFicoScorePLD.client.model.Score;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class Respuesta {
   @SerializedName("declaracionesConsumidor")
   private String declaracionesConsumidor = null;
   @SerializedName("persona")
-  private PersonasRespuesta persona = null;
+  private PersonaRespuesta persona = null;
   @SerializedName("consultas")
   private List<Consulta> consultas = null;
   @SerializedName("creditos")
@@ -85,16 +85,16 @@ public class Respuesta {
   public void setDeclaracionesConsumidor(String declaracionesConsumidor) {
     this.declaracionesConsumidor = declaracionesConsumidor;
   }
-  public Respuesta persona(PersonasRespuesta persona) {
+  public Respuesta persona(PersonaRespuesta persona) {
     this.persona = persona;
     return this;
   }
    
   @ApiModelProperty(value = "")
-  public PersonasRespuesta getPersona() {
+  public PersonaRespuesta getPersona() {
     return persona;
   }
-  public void setPersona(PersonasRespuesta persona) {
+  public void setPersona(PersonaRespuesta persona) {
     this.persona = persona;
   }
   public Respuesta consultas(List<Consulta> consultas) {
