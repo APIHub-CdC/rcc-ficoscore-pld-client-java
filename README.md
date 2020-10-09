@@ -1,4 +1,4 @@
-# rcc-ficoscore-pld-client-java
+# rcc-ficoscore-pld-client-java [![GitHub Packages](https://img.shields.io/badge/Maven-Latest&nbsp;package&nbsp;version-red)](https://github.com/orgs/APIHub-CdC/packages?repo_name=rcc-ficoscore-pld-client-java)
 
 Reporta el historial crediticio; el cumplimiento de pago de los compromisos que la persona ha adquirido con entidades financieras, no financieras e instituciones comerciales que dan crédito o participan en actividades afines al crédito; y filtra contra listas de cumplimiento para Prevención de Lavado de Dinero.
 
@@ -132,95 +132,135 @@ key_alias=cdc
 key_password=your_super_secure_password
 ```
 ### Paso 5. Modificar URL
-En el archivo ApiTest.java, que se encuentra en ***src/test/java/io/RCCFicoScorePLD/client/api/***. Se deberá modificar los datos de la petición y de la URL para el consumo de la API en setBasePath("the_url"), como se muestra en el siguiente fragmento de código con los datos correspondientes:
+En el archivo ApiTest.java, que se encuentra en ***src/test/java/com/cdc/apihub/mx/RCC/FS/PLD/test/***. Se deberá modificar los datos de la petición y los datos de consumo:
+
+1. Configurar ubicación y acceso de la llave creado en el **paso 1** y el certificado descargado en el **paso 2**
+   - keystoreFile: ubicacion del archivo keystore.jks
+   - cdcCertFile: ubicacion del archivo cdc_cert.pem
+   - keystorePassword: contraseña de cifrado del keystore
+   - keyAlias: alias asignado al keystore
+   - keyPassword: contraseña de cifrado del contenedor
+
+2. Credenciales de acceso dadas por Círculo de Crédito, obtenidas despues de la afiliación
+   - usernameCDC: usuario de Círculo de Crédito
+   - passwordCDC: contraseña de Círculo de Crédito
+	
+2. Datos de consumo del API
+   - url: URL de la exposicón del API
+   - xApiKey: Ubicada en la aplicación (creada en el **paso 2**) del portal y nombrada como Consumer Key 
+
+> **NOTA:** Los datos de la siguiente petición son solo representativos.
 
 ```java
-private final RCCFicoScorePLDApi api = new RCCFicoScorePLDApi();
-private Logger logger = LoggerFactory.getLogger(ApiTest.class.getName());
 
-private ApiClient apiClient;
+package com.cdc.apihub.mx.RCC.FS.PLD.test;
+...
 
+public class ApiTest {
+	private final RCCFSPLDApi api = new RCCFSPLDApi();
+	private Logger logger = LoggerFactory.getLogger(ApiTest.class.getName());
+
+	private ApiClient apiClient;
+
+	private String keystoreFile = "your_path_for_your_keystore/keystore.jks";
+	private String cdcCertFile = "your_path_for_certificate_of_cdc/cdc_cert.pem";
+	private String keystorePassword = "your_super_secure_keystore_password";
+	private String keyAlias = "your_key_alias";
+	private String keyPassword = "your_super_secure_password";
+	
+	private String usernameCDC = "your_username_otrorgante";
+	private String passwordCDC = "your_password_otorgante";	
+	
+	private String url = "the_url";
+	private String xApiKey = "X_Api_Key";
+	
+	private SignerInterceptor interceptor;
+	
 	@Before()
 	public void setUp() {
-	this.apiClient = api.getApiClient();
-	this.apiClient.setBasePath("the_url");
-	OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
-		.readTimeout(30, TimeUnit.SECONDS)
-		.addInterceptor(new SignerInterceptor())
-		.build();
-	apiClient.setHttpClient(okHttpClient);
+		interceptor = new SignerInterceptor(keystoreFile, cdcCertFile, keystorePassword, keyAlias, keyPassword);
+		this.apiClient = api.getApiClient();
+		this.apiClient.setBasePath(url);
+		OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+			    .readTimeout(30, TimeUnit.SECONDS)
+			    .addInterceptor(interceptor)
+			    .build();
+		apiClient.setHttpClient(okHttpClient);
 	}
 
-@Test
-public void getReporteTest() throws ApiException {
+	@Test
+	public void getReporteTest() throws ApiException {
+		
+		Boolean xFullReport = false;
+		Integer estatusOK = 200;
+		Integer estatusNoContent = 204;		
 
-	String xApiKey = "your_api_key";
-	String username = "your_username";
-	String password = "your_password";
-	Boolean xFullReport = false;
+		PersonaPeticion persona = new PersonaPeticion();
+		DomicilioPeticion domicilio = new DomicilioPeticion();
+		
+		persona.setApellidoPaterno("PATERNO");
+		persona.setApellidoMaterno("MATERNO");
+		persona.setPrimerNombre("PRIMERNOMBRE");
+	    persona.setFechaNacimiento("1952-05-13");
+	    persona.setRFC("PAMP010101");
+	    persona.setNacionalidad("MX");
+		
+		domicilio.setDireccion("HIDALGO 32");
+		domicilio.setColoniaPoblacion("CENTRO");
+		domicilio.setDelegacionMunicipio("LA BARCA");
+		domicilio.setCiudad("BENITO JUAREZ");
+		domicilio.setEstado(CatalogoEstados.JAL);
+		domicilio.setCP("47917");
+		
+		persona.setDomicilio(domicilio);
+		
+		try {
+			
+			ApiResponse<?> response = api.getGenericReporte(xApiKey, usernameCDC, passwordCDC, persona, xFullReport);
+			
+			Assert.assertTrue(estatusOK.equals(response.getStatusCode()));
+			
+			if (estatusOK.equals(response.getStatusCode())) {
+				Respuesta responseOK = (Respuesta) response.getData();
+				logger.info(responseOK.toString());
+				
+				if (responseOK.getFolioConsulta() != null && !xFullReport ) {
+					String folioConsulta = responseOK.getFolioConsulta();
 
-	PersonaPeticion persona = new PersonaPeticion();
-	DomicilioPeticion domicilio = new DomicilioPeticion();
+					Consultas consultas2 = api.getConsultas(folioConsulta, xApiKey, usernameCDC, passwordCDC);
+					Assert.assertTrue(consultas2.getConsultas() != null);
 
-	persona.setApellidoPaterno("PATERNO");
-	persona.setApellidoMaterno("MATERNO");
-	persona.setApellidoAdicional(null);
-	persona.setPrimerNombre("PRIMERNOMBRE");
-	persona.setSegundoNombre(null);
-	persona.setFechaNacimiento("1952-05-13");
-	persona.setRFC("PAMP010101");
-	persona.setCURP(null);
-	persona.setNacionalidad("MX");
-	persona.setResidencia(null);
-	persona.setEstadoCivil(null);
-	persona.setSexo(null);
-	persona.setClaveElectorIFE(null);
-	persona.setNumeroDependientes(null);
-	persona.setFechaDefuncion(null);
-	persona.setDomicilio(null);
+					Creditos creditos = api.getCreditos(folioConsulta, xApiKey, usernameCDC, passwordCDC);
+					Assert.assertTrue(creditos.getCreditos() != null);
 
+					DomiciliosRespuesta domicilios = api.getDomicilios(folioConsulta, xApiKey, usernameCDC, passwordCDC);
+					Assert.assertTrue(domicilios.getDomicilios() != null);
 
-	domicilio.setDireccion("HIDALGO 32");
-	domicilio.setColoniaPoblacion("CENTRO");
-	domicilio.setDelegacionMunicipio("LA BARCA");
-	domicilio.setCiudad("BENITO JUAREZ");
-	domicilio.setEstado(CatalogoEstados.JAL);
-	domicilio.setCP("47917");
-	domicilio.setFechaResidencia(null);
-	domicilio.setNumeroTelefono(null);
-	domicilio.setTipoDomicilio(null);
-	domicilio.setTipoAsentamiento(null);
+					Empleos empleos = api.getEmpleos(folioConsulta, xApiKey, usernameCDC, passwordCDC);
+					Assert.assertTrue(empleos.getEmpleos() != null);
 
-	persona.setDomicilio(domicilio);
+					Scores scores = api.getScores(folioConsulta, xApiKey, usernameCDC, passwordCDC);
+					Assert.assertTrue(scores.getScores() != null);
+					
+					Mensajes mensajes = api.getMensajes(folioConsulta, xApiKey, usernameCDC, passwordCDC);
+					Assert.assertTrue(mensajes.getMensajes() != null);
+				}				
+			}
 
-	Respuesta response = api.getReporte(xApiKey, username, password, persona, xFullReport);
+		} catch (ApiException e) {
+			
+			if (!estatusNoContent.equals(e.getCode())) {
+				logger.info("Response received from API: "+interceptor.getErrores().toString());
+				logger.info("Response processed by client:"+ e.getResponseBody());
+			} else {
+				logger.info("The response was a status 204 (NO CONTENT)");
+			}
+			
+			Assert.assertTrue(estatusOK.equals(e.getCode()));
+		}	
 
-	Assert.assertTrue(response.getFolioConsulta() != null);
-
-	logger.info(response.toString());
-
-	if (response.getFolioConsulta() != null && !xFullReport ) {
-		String folioConsulta = response.getFolioConsulta();
-
-		Consultas consultas2 = api.getConsultas(folioConsulta, xApiKey, username, password);
-		Assert.assertTrue(consultas2.getConsultas() != null);
-
-		Creditos creditos = api.getCreditos(folioConsulta, xApiKey, username, password);
-		Assert.assertTrue(creditos.getCreditos() != null);
-
-		DomiciliosRespuesta domicilios = api.getDomicilios(folioConsulta, xApiKey, username, password);
-		Assert.assertTrue(domicilios.getDomicilios() != null);
-
-		Empleos empleos = api.getEmpleos(folioConsulta, xApiKey, username, password);
-		Assert.assertTrue(empleos.getEmpleos() != null);
-
-		Scores scores = api.getScores(folioConsulta, xApiKey, username, password);
-		Assert.assertTrue(scores.getScores() != null);
-
-		Mensajes mensajes = api.getMensajes(folioConsulta, xApiKey, username, password);
-		Assert.assertTrue(mensajes.getMensajes() != null);
 	}
-
+        
 }
 ```
 ### Paso 6. Ejecutar la prueba unitaria
