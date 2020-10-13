@@ -15,6 +15,7 @@
 			<url>https://maven.pkg.github.com/APIHub-CdC/rcc-ficoscore-pld-client-java</url>
 		</repository>
 	</distributionManagement>
+
 	<developers>
 		<developer>
 			<name>API Hub</name>
@@ -87,7 +88,7 @@
 		<dependency>
 			<groupId>com.cdc.apihub.signer.manager</groupId>
 			<artifactId>signature-manager-java</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger</groupId>
@@ -153,6 +154,7 @@
 			<version>${commons-httpclient-version}</version>
 		</dependency>
 	</dependencies>
+
 	<properties>
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
