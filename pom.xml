@@ -12,7 +12,7 @@
 		<repository>
 			<id>github</id>
 			<name>GitHub APIHub-CdC Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/APIHub-CdC/rcc-ficoscore-pld-client-java</url>
+			<url>https://maven.pkg.github.com/APIHub-CdC/signature-manager-java</url>
 		</repository>
 	</distributionManagement>
 
