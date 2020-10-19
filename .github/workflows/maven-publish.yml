@@ -33,10 +33,5 @@ jobs:
     - name: Publish to GitHub Packages Apache Maven
       env:
         GITHUB_TOKEN: ${{ github.token }}
-        GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_ACTOR2: ${{ github.repository_owner }}
-      run: |
-        echo "${GITHUB_TOKEN}"
-        echo "${GITHUB_ACTOR}" 
-        echo "${GITHUB_ACTOR2}"     
-        mvn deploy -s $GITHUB_WORKSPACE/settings.xml -Dmaven.test.skip=true
+        GITHUB_ACTOR: ${{ github.repository_owner }}
+      run: mvn deploy --settings settingsAPIHUB.xml -Dmaven.test.skip=true
