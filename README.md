@@ -1,4 +1,5 @@
-# rcc-ficoscore-pld-client-java [![GitHub Packages](https://img.shields.io/badge/Maven-Latest&nbsp;package&nbsp;version-red)](https://github.com/orgs/APIHub-CdC/packages?repo_name=rcc-ficoscore-pld-client-java)
+# rcc-ficoscore-pld-client-java [![GitHub Packages](https://img.shields.io/badge/Maven&nbsp;package-Last&nbsp;version-lemon)](https://github.com/orgs/APIHub-CdC/packages?repo_name=rcc-ficoscore-pld-client-java) 
+
 
 Reporta el historial crediticio; el cumplimiento de pago de los compromisos que la persona ha adquirido con entidades financieras, no financieras e instituciones comerciales que dan crédito o participan en actividades afines al crédito; y filtra contra listas de cumplimiento para Prevención de Lavado de Dinero.
 
@@ -6,12 +7,23 @@ Reporta el historial crediticio; el cumplimiento de pago de los compromisos que 
 
 1. Java >= 1.7
 2. Maven >= 3.3
+
 ## Instalación
 
-Para la instalación de las dependencias se deberá ejecutar el siguiente comando:
+**Prerrequisito**: obtener token de acceso y configuración de las credenciales de acceso. Consulte el manual **[aquí](https://github.com/APIHub-CdC/maven-github-packages)**.
+
+**Opción 1**: En caso que la configuración se integró en el archivo **settingsAPIHUB.xml** (ubicado en la raíz del proyecto), instale las dependencias con siguiente comando:
+
+```shell
+mvn --settings settingsAPIHUB.xml clean install -Dmaven.test.skip=true
+```
+
+**Opción 2**: Si se integró la configuración en el **settings.xml** del **.m2**, instale las dependencias con siguiente comando:
+
 ```shell
 mvn install -Dmaven.test.skip=true
 ```
+
 ## Guía de inicio
 
 ### Paso 1. Generar llave y certificado
@@ -257,10 +269,8 @@ public class ApiTest {
 			}
 			
 			Assert.assertTrue(estatusOK.equals(e.getCode()));
-		}	
-
-	}
-        
+		}
+	}  
 }
 ```
 ### Paso 6. Ejecutar la prueba unitaria
