@@ -10,9 +10,9 @@
 
 	<distributionManagement>
 		<repository>
-			<id>github</id>
+			<id>rcc-ficoscore-pld-client-java</id>
 			<name>GitHub APIHub-CdC Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/APIHub-CdC/signature-manager-java</url>
+			<url>https://maven.pkg.github.com/APIHub-CdC/rcc-ficoscore-pld-client-java</url>
 		</repository>
 	</distributionManagement>
 
@@ -89,15 +89,16 @@
 				<version>3.0.0-M1</version>
 			</plugin>
 		</plugins>
-
 	</build>
 
 	<dependencies>
+		<!-- API HUB dependencies -->
 		<dependency>
 			<groupId>com.cdc.apihub.signer.manager</groupId>
 			<artifactId>signature-manager-java</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
+		<!--  -->
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-annotations</artifactId>
