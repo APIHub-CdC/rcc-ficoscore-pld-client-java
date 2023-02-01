@@ -279,3 +279,9 @@ Teniendo los pasos anteriores ya solo falta ejecutar la prueba unitaria, con el 
 ```shell
 mvn test -Dmaven.install.skip=true
 ```
+
+
+---
+[CONDICIONES DE USO, REPRODUCCIÓN Y DISTRIBUCIÓN](https://github.com/APIHub-CdC/licencias-cdc)
+
+[1]: https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos
