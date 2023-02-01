@@ -63,7 +63,6 @@ public class ApiTest {
 	@Test
 	public void getReporteTest() throws ApiException {
 		
-		Boolean xFullReport = false;
 		Integer estatusOK = 200;
 		Integer estatusNoContent = 204;		
 
@@ -102,35 +101,14 @@ public class ApiTest {
 		
 		try {
 			
-			ApiResponse<?> response = api.getGenericReporte(xApiKey, usernameCDC, passwordCDC, persona, xFullReport);
+			ApiResponse<?> response = api.getGenericReporte(xApiKey, usernameCDC, passwordCDC, persona);
 			
 			Assert.assertTrue(estatusOK.equals(response.getStatusCode()));
 			
 			if (estatusOK.equals(response.getStatusCode())) {
 				Respuesta responseOK = (Respuesta) response.getData();
 				logger.info(responseOK.toString());
-				
-				if (responseOK.getFolioConsulta() != null && !xFullReport ) {
-					String folioConsulta = responseOK.getFolioConsulta();
-
-					Consultas consultas2 = api.getConsultas(folioConsulta, xApiKey, usernameCDC, passwordCDC);
-					Assert.assertTrue(consultas2.getConsultas() != null);
-
-					Creditos creditos = api.getCreditos(folioConsulta, xApiKey, usernameCDC, passwordCDC);
-					Assert.assertTrue(creditos.getCreditos() != null);
-
-					DomiciliosRespuesta domicilios = api.getDomicilios(folioConsulta, xApiKey, usernameCDC, passwordCDC);
-					Assert.assertTrue(domicilios.getDomicilios() != null);
-
-					Empleos empleos = api.getEmpleos(folioConsulta, xApiKey, usernameCDC, passwordCDC);
-					Assert.assertTrue(empleos.getEmpleos() != null);
-
-					Scores scores = api.getScores(folioConsulta, xApiKey, usernameCDC, passwordCDC);
-					Assert.assertTrue(scores.getScores() != null);
-					
-					Mensajes mensajes = api.getMensajes(folioConsulta, xApiKey, usernameCDC, passwordCDC);
-					Assert.assertTrue(mensajes.getMensajes() != null);
-				}				
+						
 			}
 
 		} catch (ApiException e) {
